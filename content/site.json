@@ -1,11 +1,11 @@
 {
-  "_instructions": "Ganti setiap nilai yang diawali TODO. Selama masih ada TODO, `pnpm build` akan gagal dengan sengaja. Untuk melihat situsnya sebelum konten selesai, jalankan `pnpm dev` atau `pnpm build:draft`.",
+  "_instructions": "Teks di file ini SUDAH DITULIS dari fakta yang kamu berikan. Tugasmu: baca dan koreksi yang tidak akurat, jangan menerima begitu saja. Yang masih TODO cuma yang butuh datamu sendiri.",
 
   "name": "Harun Bahrudin",
   "role": "Frontend Engineer",
 
-  "headline": "TODO: satu kalimat positioning. Contoh bentuknya: 'I build interfaces for web, mobile, and desktop, and I have shipped them to production for four years.' Maksimal 2 baris di desktop.",
-  "intro": "TODO: dua kalimat pendukung, maksimal 20 kata total. Sebutkan platform utama dan jenis pekerjaan yang kamu cari.",
+  "headline": "I build production interfaces for web, mobile, and desktop.",
+  "intro": "Frontend engineer in Jakarta. I take designs and APIs I did not write, and ship them as products people use.",
 
   "availability": "Open to remote roles",
   "email": "harunbahrudin769@gmail.com",
@@ -16,35 +16,35 @@
   "capabilities": [
     {
       "platform": "Web",
-      "body": "TODO: satu sampai dua kalimat tentang apa yang benar-benar kamu kirim di web. Sebut hal konkret, bukan daftar teknologi."
+      "body": "Next.js and React with TypeScript. I work from a design file and an API contract I did not author, and make the result hold together across every breakpoint and every state the screen can reach."
     },
     {
       "platform": "Mobile",
-      "body": "TODO: satu sampai dua kalimat tentang React Native dan Flutter. Sebut jenis aplikasi dan apa yang kamu tangani sendiri."
+      "body": "React Native and Flutter, shipped to Android and iOS. Navigation that behaves the way the platform expects, lists that stay smooth on cheap hardware, and the loading and error states most builds forget."
     },
     {
       "platform": "Desktop",
-      "body": "TODO: satu sampai dua kalimat tentang Electron. Sebut kenapa aplikasi itu perlu desktop, bukan web."
+      "body": "Electron, for products that need a window instead of a tab. Long-running sessions, local files, and interfaces people leave open all day rather than visit for a minute."
     }
   ],
 
   "services": {
-    "intro": "TODO: satu kalimat, untuk siapa layanan ini dan masalah apa yang kamu selesaikan.",
+    "intro": "For teams that already have a design and an API, and need someone to turn them into something that ships.",
     "offers": [
       {
         "title": "Web interfaces",
-        "body": "TODO: apa yang klien dapat, dalam satu sampai dua kalimat."
+        "body": "A design file becomes a working Next.js application. Responsive, accessible, and complete down to the empty and error states."
       },
       {
         "title": "Mobile apps",
-        "body": "TODO: apa yang klien dapat, dalam satu sampai dua kalimat."
+        "body": "React Native or Flutter, built to the platform's own conventions rather than a web layout wrapped in a shell."
       },
       {
         "title": "Desktop apps",
-        "body": "TODO: apa yang klien dapat, dalam satu sampai dua kalimat."
+        "body": "Electron builds for internal tools and operator software, where the work happens in one window over a long session."
       }
     ],
-    "howIWork": "TODO: cara kerja kamu. Sebut komunikasi async, bahasa Inggris tertulis, zona waktu, dan ritme update.",
-    "notDoing": "TODO: apa yang kamu tidak kerjakan. Sebut arsitektur backend dan desain visual dari nol kalau memang bukan wilayah kamu."
+    "howIWork": "Async and in writing, in English. I am in Jakarta at UTC+7, which overlaps with European mornings and the full Asian working day. You get a link to something running early, and a short written update at the end of each week.",
+    "notDoing": "Backend architecture, database design, and brand identity. I will build against your API and your design system, and I will tell you early when a spec has a hole in it, but I am not the person to design either one from scratch."
   }
 }

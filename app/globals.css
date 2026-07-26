@@ -27,6 +27,17 @@
   --link: var(--foreground);
   --radius: 0.5rem;
 
+  /* Line weight for the device drawings. The hairline token is tuned for
+     1px dividers and is far too faint to carry artwork, so the drawings
+     get their own two steps: one that reads, one that recedes. */
+  --art: #b3b0ab;
+  --art-soft: #d6d3ce;
+
+  /* The one place this design carries a real shadow. Depth needs it: a
+     plane in 3D space without a contact shadow reads as a sticker. Tinted
+     to the background rather than pure black. */
+  --panel-shadow: 0 28px 56px -20px rgb(28 25 23 / 0.16), 0 2px 6px rgb(28 25 23 / 0.05);
+
   /* The library ships lifted surfaces. This design is flat, so the
      shadows are removed rather than restyled. */
   --surface-shadow: none;
@@ -51,6 +62,11 @@
   --separator: #1f1f1f;
   --link: var(--foreground);
 
+  --art: #474747;
+  --art-soft: #292929;
+
+  --panel-shadow: 0 34px 68px -22px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(255 255 255 / 0.025);
+
   --surface-shadow: none;
   --field-shadow: none;
   --overlay-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
@@ -60,9 +76,20 @@
   --shell: 1120px;
   --measure: 720px;
 
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --micro: 180ms;
-  --reveal: 420ms;
+  /* Built-in CSS easings are too soft to read as intentional. These are
+     the stronger variants: ease-out for anything entering, ease-in-out
+     for movement that stays on screen. ease-in is never used, since it
+     delays the first frame, which is exactly the frame being watched. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease: var(--ease-out);
+
+  /* Exit is shorter than enter. The system should answer faster than it
+     announces. */
+  --press: 120ms;
+  --micro: 160ms;
+  --enter: 300ms;
+  --exit: 180ms;
 }
 
 @theme inline {
@@ -75,12 +102,19 @@
   --color-muted: var(--muted);
   --color-line: var(--border);
   --color-accent: var(--accent);
+  --color-art: var(--art);
+  --color-art-soft: var(--art-soft);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
   --spacing-shell: var(--shell);
   --spacing-measure: var(--measure);
+
+  /* Every utility-driven transition inherits the same curve and tempo, so
+     the whole page moves with one rhythm instead of a dozen defaults. */
+  --default-transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  --default-transition-duration: 160ms;
 }
 
 @layer base {
@@ -90,6 +124,11 @@
   }
 
   body {
+    /* A panel pushed forward on the Z axis paints wider than its box, and
+       that extra width grows the document instead of being ignored. Without
+       this the whole page scrolled sideways on a phone and clipped the
+       headline. `clip` rather than `hidden` so sticky positioning survives. */
+    overflow-x: clip;
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -117,7 +156,67 @@
   }
 }
 
+/* ---------------------------------------------------------------
+   Entry animation lives in CSS, not JavaScript.
+
+   The previous version started at opacity 0 and relied on a script to
+   raise it, which meant a headline and a primary CTA that never appeared
+   if the animation did not complete. CSS animations do not depend on the
+   main thread finishing its work, and `both` fill mode guarantees the
+   final state. Content that matters must never be gated on JS.
+--------------------------------------------------------------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.34em);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes draw-in {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
 @layer components {
+  /* Default state is the finished state. The animation only replays the
+     arrival, so nothing can strand the content out of sight. */
+  .rise-word {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  .reveal {
+    animation-delay: var(--d, 0ms);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .rise-word {
+      animation: rise-in 560ms var(--ease-out) both;
+      animation-delay: calc(var(--i, 0) * 35ms);
+    }
+
+    .reveal {
+      animation: fade-up 420ms var(--ease-out) both;
+    }
+
+    .draw path,
+    .draw rect,
+    .draw line {
+      stroke-dasharray: 1;
+      animation: draw-in var(--draw-duration, 900ms) var(--ease-out) both;
+      animation-delay: var(--draw-delay, 0ms);
+    }
+  }
+
   /* HeroUI ships pill buttons with an accent-filled primary. This design
      is squared and keeps the accent for three roles only, so the two
      custom properties the component exposes are re-pointed instead of the
@@ -136,21 +235,43 @@
     border-radius: var(--radius);
   }
 
-  .btn-quiet.btn-quiet:hover {
-    --button-fg: var(--accent);
-  }
-
   /* Secondary links sit back until pointed at. Same doubled-selector
      reason as above. */
   .link-quiet.link-quiet {
     color: var(--muted);
     font-size: 0.875rem;
     text-decoration: none;
-    transition: color var(--micro) var(--ease);
+    transition: color var(--micro) var(--ease-out);
   }
 
-  .link-quiet.link-quiet:hover {
-    color: var(--accent);
+  /* Press feedback. Without it the button does not confirm that the
+     interface heard the tap. Scale stays subtle so nothing shifts around
+     it, and the library's own pressed state carries the colour. */
+  .btn-solid.btn-solid,
+  .btn-quiet.btn-quiet {
+    transition:
+      transform var(--press) var(--ease-out),
+      background-color var(--micro) var(--ease-out),
+      color var(--micro) var(--ease-out);
+  }
+
+  .btn-solid.btn-solid:active,
+  .btn-solid.btn-solid[data-pressed],
+  .btn-quiet.btn-quiet:active,
+  .btn-quiet.btn-quiet[data-pressed] {
+    transform: scale(0.97);
+  }
+
+  /* Touch devices fire hover on tap, which leaves elements stuck in the
+     hovered state after the finger lifts. */
+  @media (hover: hover) and (pointer: fine) {
+    .btn-quiet.btn-quiet:hover {
+      --button-fg: var(--accent);
+    }
+
+    .link-quiet.link-quiet:hover {
+      color: var(--accent);
+    }
   }
 }
 
@@ -239,6 +360,9 @@
   }
 }
 
+/* Reduced motion means less movement, not less clarity. Colour and
+   opacity transitions still help people follow what changed, so they
+   stay; anything that travels or scales does not. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -249,6 +373,8 @@
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-property: color, background-color, border-color, opacity, fill,
+      stroke !important;
+    transform: none !important;
   }
 }

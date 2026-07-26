@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ServiceCard } from "@/components/service-card";
 import { CopyEmail } from "@/components/copy-email";
-import { Reveal } from "@/components/reveal";
+import { AnimatedHeadline, Reveal } from "@/components/reveal";
 import { getSite } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -14,12 +14,16 @@ export default function ServicesPage() {
 
   return (
     <section className="shell pt-16 pb-8 md:pt-24">
-      <h1 className="display text-4xl md:text-6xl">Services</h1>
-      <p className="measure mt-6 text-lg text-muted">{site.services.intro}</p>
+      <AnimatedHeadline text="Services" className="display text-4xl md:text-6xl" />
+      <Reveal delay={0.2}>
+        <p className="measure mt-6 text-lg text-muted">{site.services.intro}</p>
+      </Reveal>
 
       <div className="mt-20 grid gap-4 md:grid-cols-3">
-        {site.services.offers.map((offer) => (
-          <ServiceCard key={offer.title} title={offer.title} body={offer.body} />
+        {site.services.offers.map((offer, i) => (
+          <Reveal key={offer.title} delay={i * 0.05}>
+            <ServiceCard title={offer.title} body={offer.body} />
+          </Reveal>
         ))}
       </div>
 

@@ -1,11 +1,15 @@
-"use client";
-
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 /**
- * Section entry. Motivated by hierarchy: content arrives in reading
- * order instead of all at once. Fires once, never loops.
+ * Entry animation, in CSS.
+ *
+ * These used to be Motion components that started at opacity 0 and waited
+ * on JavaScript. When the animation did not complete the content stayed
+ * invisible, which cost the homepage its headline and its primary CTA.
+ * CSS keyframes with `both` fill mode cannot fail that way, they do not
+ * ship any JavaScript, and they run off the main thread.
+ *
+ * Both are server components now.
  */
 export function Reveal({
   children,
@@ -16,17 +20,48 @@ export function Reveal({
   delay?: number;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
   return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.42, delay, ease: [0.16, 1, 0.3, 1] }}
+    <div
+      className={`reveal${className ? ` ${className}` : ""}`}
+      style={{ "--d": `${Math.round(delay * 1000)}ms` } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
+  );
+}
+
+/**
+ * The headline arrives word by word. The stagger is capped by the CSS
+ * `--i` index the caller sets, so a long sentence never turns into a slow
+ * one, and every word is legible from the first paint regardless.
+ */
+export function AnimatedHeadline({
+  text,
+  className,
+  as: Tag = "h1",
+}: {
+  text: string;
+  className?: string;
+  as?: "h1" | "h2";
+}) {
+  const words = text.split(" ");
+  const last = words.length - 1;
+
+  return (
+    <Tag className={className}>
+      {words.map((word, i) => (
+        // The space is a plain text node between spans. Inside an
+        // inline-block a trailing space collapses and the words merge.
+        <span key={`${word}-${i}`}>
+          <span
+            className="rise-word"
+            style={{ "--i": Math.min(i, 12) } as CSSProperties}
+          >
+            {word}
+          </span>
+          {i < last ? " " : null}
+        </span>
+      ))}
+    </Tag>
   );
 }
