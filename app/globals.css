@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Semantic tokens. One palette, two themes, one accent.
+   The accent appears in exactly three roles: availability state,
+   interactive hover, and the active nav item. Nowhere else.
+--------------------------------------------------------------- */
+
+:root {
+  --bg: #fafaf9;
+  --surface: #f2f1ee;
+  --fg: #111111;
+  --muted: #6b6b6b;
+  --line: #e7e5e4;
+  --accent: #ff4d00;
+
+  --shell: 1120px;
+  --measure: 720px;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --micro: 180ms;
+  --reveal: 420ms;
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #131313;
+  --fg: #ededed;
+  --muted: #7a7a7a;
+  --line: #1f1f1f;
+  --accent: #ff5a14;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --spacing-shell: var(--shell);
+  --spacing-measure: var(--measure);
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* The theme swap should not animate every colour on the page. */
+  html[data-theme-changing] * {
+    transition: none !important;
+  }
+}
+
+@layer utilities {
+  .shell {
+    width: 100%;
+    max-width: var(--shell);
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .measure {
+    max-width: var(--measure);
+  }
+
+  .label {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .display {
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    font-weight: 600;
+  }
+
+  .prose-body :is(p, ul, ol) {
+    color: var(--fg);
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+    max-width: var(--measure);
+  }
+
+  .prose-body h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose-body :is(ul, ol) {
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  .prose-body li {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose-body strong {
+    font-weight: 600;
+  }
+
+  .prose-body code {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.9em;
+    background-color: var(--surface);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+
+  .prose-body pre {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .prose-body pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.8125rem;
+    line-height: 1.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

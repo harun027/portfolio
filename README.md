@@ -1,6 +1,6 @@
 # portfolio
 
-Personal site of **Harun Bahrudin** — a frontend engineer who ships to web, mobile, and desktop.
+Personal site of **Harun Bahrudin**, a frontend engineer who ships to web, mobile, and desktop.
 
 The site is built around implementation-craft case studies: what the constraint was, what I tried and rejected, and what I actually did. Not client logos, not a technology wall.
 
@@ -14,7 +14,7 @@ In development. Not deployed yet.
 |---|---|
 | Framework | Next.js (App Router) + TypeScript |
 | Styling | Tailwind CSS v4, design tokens in CSS variables |
-| Content | Local MDX, validated at build time — no CMS |
+| Content | Local MDX and JSON, validated at build time. No CMS |
 | Motion | Motion, with full `prefers-reduced-motion` support |
 | Hosting | Vercel |
 
@@ -38,11 +38,30 @@ lib/         content loading and frontmatter validation
 public/      images and cv.pdf
 ```
 
+## The content gate
+
+A portfolio whose copy is not written yet should not be deployable, so that rule
+lives in the build rather than in good intentions. `lib/content.ts` validates
+every frontmatter field and every content file, and `next build` exits non-zero
+when a required field is missing or a string still reads `TODO`, `TBD`, `lorem`,
+or `placeholder`.
+
+To look at an unfinished site locally, skip the gate:
+
+```bash
+pnpm build:draft   # warns instead of failing
+```
+
+Images are the one exception. Temporary imagery is allowed while real
+screenshots are pending; unwritten text is not.
+
 ## Local development
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev          # http://localhost:3000
+pnpm typecheck
+pnpm build        # fails while any copy is unwritten, by design
 ```
 
 ## Licence

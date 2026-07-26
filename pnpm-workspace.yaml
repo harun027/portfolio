@@ -1,0 +1,4 @@
+# sharp is next/image's optimiser and ships a native binary, so pnpm needs
+# explicit permission to run its install script.
+allowBuilds:
+  sharp: true
