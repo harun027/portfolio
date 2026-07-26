@@ -46,11 +46,9 @@ every frontmatter field and every content file, and `next build` exits non-zero
 when a required field is missing or a string still reads `TODO`, `TBD`, `lorem`,
 or `placeholder`.
 
-To look at an unfinished site locally, skip the gate:
-
-```bash
-pnpm build:draft   # warns instead of failing
-```
+The gate stops a deploy, not your eyes. `pnpm dev` is never gated, and
+`pnpm build:draft` runs the same production build with warnings instead of
+failures when you need to inspect the output.
 
 Images are the one exception. Temporary imagery is allowed while real
 screenshots are pending; unwritten text is not.

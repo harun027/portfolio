@@ -11,7 +11,10 @@ import matter from "gray-matter";
    unfinished site locally.
 --------------------------------------------------------------- */
 
-const DRAFT = process.env.CONTENT_DRAFT === "1";
+// The gate exists to stop a deploy, not to stop you looking at the site.
+// Development always runs in draft mode; only a production build refuses
+// to proceed on unwritten copy.
+const DRAFT = process.env.CONTENT_DRAFT === "1" || process.env.NODE_ENV !== "production";
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
 const UNWRITTEN = /\b(lorem ipsum|lorem|todo|tbd|fixme|placeholder|isi di sini)\b/i;
@@ -64,8 +67,9 @@ class ContentError extends Error {
     super(
       `\n\nContent is not ready: ${file}\n` +
         problems.map((p) => `  - ${p}`).join("\n") +
-        `\n\nFill this in before building. To preview an unfinished site locally, run:\n` +
-        `  pnpm build:draft\n`,
+        `\n\nFill this in before deploying. To look at the unfinished site, run:\n` +
+        `  pnpm dev          (never gated)\n` +
+        `  pnpm build:draft  (production build, warnings only)\n`,
     );
     this.name = "ContentError";
   }
