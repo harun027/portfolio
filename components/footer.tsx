@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ExternalLink } from "./external-link";
 import { CopyEmail } from "./copy-email";
 import { getSite } from "@/lib/content";
 
@@ -14,26 +14,9 @@ export function Footer() {
 
         <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
           <CopyEmail email={site.email} />
-          <Link
-            href={site.github}
-            className="text-sm text-muted transition-colors duration-[--micro] hover:text-accent"
-          >
-            GitHub
-          </Link>
-          {site.linkedin && (
-            <Link
-              href={site.linkedin}
-              className="text-sm text-muted transition-colors duration-[--micro] hover:text-accent"
-            >
-              LinkedIn
-            </Link>
-          )}
-          <Link
-            href="/cv.pdf"
-            className="text-sm text-muted transition-colors duration-[--micro] hover:text-accent"
-          >
-            CV
-          </Link>
+          <ExternalLink href={site.github}>GitHub</ExternalLink>
+          {site.linkedin && <ExternalLink href={site.linkedin}>LinkedIn</ExternalLink>}
+          <ExternalLink href="/cv.pdf">CV</ExternalLink>
         </div>
 
         <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-8">
@@ -42,12 +25,9 @@ export function Footer() {
             <span className="mx-2 text-line">/</span>
             {site.timezone}
           </p>
-          <Link
-            href={`${site.github}/portfolio`}
-            className="label transition-colors duration-[--micro] hover:text-accent"
-          >
+          <ExternalLink className="link-quiet label" href={`${site.github}/portfolio`}>
             Source
-          </Link>
+          </ExternalLink>
         </div>
       </div>
     </footer>

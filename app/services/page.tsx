@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ServiceCard } from "@/components/service-card";
 import { CopyEmail } from "@/components/copy-email";
 import { Reveal } from "@/components/reveal";
 import { getSite } from "@/lib/content";
@@ -16,12 +17,9 @@ export default function ServicesPage() {
       <h1 className="display text-4xl md:text-6xl">Services</h1>
       <p className="measure mt-6 text-lg text-muted">{site.services.intro}</p>
 
-      <div className="mt-20 grid gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-3">
+      <div className="mt-20 grid gap-4 md:grid-cols-3">
         {site.services.offers.map((offer) => (
-          <article key={offer.title} className="bg-bg p-6 md:p-8">
-            <h2 className="display text-xl md:text-2xl">{offer.title}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted">{offer.body}</p>
-          </article>
+          <ServiceCard key={offer.title} title={offer.title} body={offer.body} />
         ))}
       </div>
 

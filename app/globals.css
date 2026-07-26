@@ -1,19 +1,62 @@
 @import "tailwindcss";
+@import "@heroui/styles";
 
 /* ---------------------------------------------------------------
-   Semantic tokens. One palette, two themes, one accent.
-   The accent appears in exactly three roles: availability state,
-   interactive hover, and the active nav item. Nowhere else.
+   One palette, expressed in HeroUI's semantic variables so the
+   library's components and the hand-built layout draw from the same
+   source. Monochrome plus a single accent, which appears in exactly
+   three roles: availability state, interactive hover, active nav.
 --------------------------------------------------------------- */
 
-:root {
-  --bg: #fafaf9;
+:root,
+[data-theme="light"] {
+  --background: #fafaf9;
+  --foreground: #111111;
   --surface: #f2f1ee;
-  --fg: #111111;
+  --surface-foreground: var(--foreground);
+  --surface-secondary: #ecebe7;
+  --overlay: #ffffff;
+  --overlay-foreground: var(--foreground);
   --muted: #6b6b6b;
-  --line: #e7e5e4;
+  --default: #ecebe7;
+  --default-foreground: var(--foreground);
   --accent: #ff4d00;
+  --accent-foreground: #ffffff;
+  --border: #e7e5e4;
+  --separator: #e7e5e4;
+  --link: var(--foreground);
+  --radius: 0.5rem;
 
+  /* The library ships lifted surfaces. This design is flat, so the
+     shadows are removed rather than restyled. */
+  --surface-shadow: none;
+  --field-shadow: none;
+  --overlay-shadow: 0 12px 32px rgb(0 0 0 / 0.08);
+}
+
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --surface: #131313;
+  --surface-foreground: var(--foreground);
+  --surface-secondary: #191919;
+  --overlay: #131313;
+  --overlay-foreground: var(--foreground);
+  --muted: #7a7a7a;
+  --default: #1a1a1a;
+  --default-foreground: var(--foreground);
+  --accent: #ff5a14;
+  --accent-foreground: #0a0a0a;
+  --border: #1f1f1f;
+  --separator: #1f1f1f;
+  --link: var(--foreground);
+
+  --surface-shadow: none;
+  --field-shadow: none;
+  --overlay-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+}
+
+:root {
   --shell: 1120px;
   --measure: 720px;
 
@@ -22,21 +65,15 @@
   --reveal: 420ms;
 }
 
-[data-theme="dark"] {
-  --bg: #0a0a0a;
-  --surface: #131313;
-  --fg: #ededed;
-  --muted: #7a7a7a;
-  --line: #1f1f1f;
-  --accent: #ff5a14;
-}
-
 @theme inline {
-  --color-bg: var(--bg);
+  /* Short aliases for the layout code. They resolve to the same
+     variables HeroUI reads, so there is no second palette to keep
+     in sync. */
+  --color-bg: var(--background);
+  --color-fg: var(--foreground);
   --color-surface: var(--surface);
-  --color-fg: var(--fg);
   --color-muted: var(--muted);
-  --color-line: var(--line);
+  --color-line: var(--border);
   --color-accent: var(--accent);
 
   --font-sans: var(--font-geist-sans);
@@ -47,18 +84,14 @@
 }
 
 @layer base {
-  * {
-    border-color: var(--line);
-  }
-
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
 
   body {
-    background-color: var(--bg);
-    color: var(--fg);
+    background-color: var(--background);
+    color: var(--foreground);
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
@@ -67,18 +100,57 @@
 
   ::selection {
     background-color: var(--accent);
-    color: #ffffff;
+    color: var(--accent-foreground);
   }
 
-  :focus-visible {
+  /* Applies to the hand-built elements. HeroUI components carry their
+     own focus ring, driven by --focus. */
+  a:focus-visible,
+  button:not([data-rac]):focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
     border-radius: 2px;
   }
 
-  /* The theme swap should not animate every colour on the page. */
   html[data-theme-changing] * {
     transition: none !important;
+  }
+}
+
+@layer components {
+  /* HeroUI ships pill buttons with an accent-filled primary. This design
+     is squared and keeps the accent for three roles only, so the two
+     custom properties the component exposes are re-pointed instead of the
+     component being reimplemented. Doubled selectors win over the
+     library's single-class variant rules regardless of layer order. */
+  .btn-solid.btn-solid {
+    --button-bg: var(--foreground);
+    --button-fg: var(--background);
+    --button-bg-hover: color-mix(in oklab, var(--foreground) 88%, var(--background));
+    --button-bg-pressed: var(--button-bg-hover);
+    border-radius: var(--radius);
+  }
+
+  .btn-quiet.btn-quiet {
+    --button-fg: var(--muted);
+    border-radius: var(--radius);
+  }
+
+  .btn-quiet.btn-quiet:hover {
+    --button-fg: var(--accent);
+  }
+
+  /* Secondary links sit back until pointed at. Same doubled-selector
+     reason as above. */
+  .link-quiet.link-quiet {
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color var(--micro) var(--ease);
+  }
+
+  .link-quiet.link-quiet:hover {
+    color: var(--accent);
   }
 }
 
@@ -115,7 +187,7 @@
   }
 
   .prose-body :is(p, ul, ol) {
-    color: var(--fg);
+    color: var(--foreground);
     line-height: 1.65;
     margin-bottom: 1.25rem;
     max-width: var(--measure);
@@ -152,8 +224,8 @@
 
   .prose-body pre {
     background-color: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1.25rem;
     overflow-x: auto;
     margin-bottom: 1.5rem;

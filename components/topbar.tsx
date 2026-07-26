@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "./theme";
 
+// Navigation is entirely internal, so these stay on next/link. HeroUI's
+// Link renders a plain anchor, which would give up client navigation and
+// prefetch on every menu item.
 const links = [
   { href: "/#work", label: "Work", match: "/work" },
   { href: "/notes", label: "Notes", match: "/notes" },

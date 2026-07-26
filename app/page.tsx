@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
+import { ExternalLink } from "@/components/external-link";
 import { CopyEmail } from "@/components/copy-email";
 import { Reveal } from "@/components/reveal";
 import { WorkList } from "@/components/work-list";
@@ -31,19 +32,11 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* External destinations use the library's Link. Internal routes
+              stay on next/link so client navigation and prefetch survive. */}
           <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
-            <Link
-              href={site.github}
-              className="text-sm text-muted transition-colors duration-[--micro] hover:text-accent"
-            >
-              GitHub
-            </Link>
-            <Link
-              href="/cv.pdf"
-              className="text-sm text-muted transition-colors duration-[--micro] hover:text-accent"
-            >
-              CV
-            </Link>
+            <ExternalLink href={site.github}>GitHub</ExternalLink>
+            <ExternalLink href="/cv.pdf">CV</ExternalLink>
           </div>
         </div>
       </section>
